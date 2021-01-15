@@ -84,16 +84,12 @@ button {
     background: none;
     border: none;
 }
-
 button:hover {
     cursor: pointer;
-
 }
-
 .carousel {
     position: relative;
 }
-
 .carousel_pages {
     position: relative;
     width: 100%;
@@ -105,17 +101,14 @@ button:hover {
     position: absolute;
     width: 100%;
     height: 100vh;
-    border: 1px solid black;
-    top: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    transition: 1s;
     overflow: hidden;
 }
 
 .carousel_page.active {
-    top: 0;
+    
 }
 
 .carousel_indicators {

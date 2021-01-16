@@ -27,14 +27,14 @@ class Slider {
                         if (i == this.activePage) {
                             clearInterval(interval);
                         }
-                    }, 300);
+                    }, 1000);
                 } else if (i < this.activePage) {
                     var interval = setInterval(() => {
                         this.move(this.prevBtn)
                         if (i == this.activePage) {
                             clearInterval(interval);
                         }
-                    }, 300);
+                    }, 1000);
                 }
             })
 
@@ -43,42 +43,41 @@ class Slider {
     }
 
     move(btn) {
-        if (this.flag == true) {
-            if (btn == this.prevBtn && this.activePage > 0) {
-                this.pages[this.activePage].style.transition = `1s`;
-                this.pages[this.activePage].classList.remove('active');
-                this.activePage--;
-                for (let i = 0; i < this.pages.length; i++) {
-                    if (i > this.activePage) {
-                        this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
-                    }
+        if (btn == this.prevBtn && this.activePage > 0) {
+            this.pages[this.activePage].style.transition = `1s`;
+            this.pages[this.activePage].classList.remove('active');
+            this.activePage--;
+            for (let i = 0; i < this.pages.length; i++) {
+                if (i > this.activePage) {
+                    this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
                 }
-                this.pages[this.activePage].style.transition = `1s`;
-                this.pages[this.activePage].style.transform = `translateY(0)`;
-                this.pages[this.activePage].classList.add('active');
-
-                this.checkIndicator();
-            } else if (btn == this.nextBtn && this.activePage < this.pages.length - 1) {
-                this.pages[this.activePage].classList.remove('active');
-                this.pages[this.activePage].style.transition = `1s`;
-                this.activePage++;
-                for (let i = 0; i < this.pages.length; i++) {
-                    if (i < this.activePage) {
-                        this.pages[i].style.transform = `translateY(${-this.pageHeight}px)`;
-                    }
-                }
-                this.pages[this.activePage].style.transition = `1s`;
-                this.pages[this.activePage].style.transform = `translateY(0)`;
-                this.pages[this.activePage].classList.add('active');
-                this.checkIndicator();
-
             }
-            this.flag = false;
-
+            this.pages[this.activePage].style.transition = `1s`;
+            this.pages[this.activePage].style.transform = `translateY(0)`;
+            this.pages[this.activePage].classList.add('active');
+            this.prevBtn.disabled = true;
+            this.checkIndicator();
+            setTimeout(() => {
+                this.prevBtn.disabled = false;
+            }, 1000);
+        } else if (btn == this.nextBtn && this.activePage < this.pages.length - 1) {
+            this.pages[this.activePage].classList.remove('active');
+            this.pages[this.activePage].style.transition = `1s`;
+            this.activePage++;
+            for (let i = 0; i < this.pages.length; i++) {
+                if (i < this.activePage) {
+                    this.pages[i].style.transform = `translateY(${-this.pageHeight}px)`;
+                }
+            }
+            this.pages[this.activePage].style.transition = `1s`;
+            this.pages[this.activePage].style.transform = `translateY(0)`;
+            this.pages[this.activePage].classList.add('active');
+            this.nextBtn.disabled = true;
+            this.checkIndicator();
+            setTimeout(() => {
+                this.nextBtn.disabled = false;
+            }, 1000);
         }
-        setTimeout(() => {
-            this.flag = true;
-        }, 2000);
 
     }
 

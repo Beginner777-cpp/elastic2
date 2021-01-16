@@ -7,6 +7,7 @@ class Slider {
         this.nextBtn = this.slider.querySelector('.next_btn')
         this.activePage = 0;
         this.pageHeight = this.slider.clientHeight;
+        this.flag = true;
         for (let i = 0; i < this.pages.length; i++) {
             this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
         }
@@ -21,15 +22,20 @@ class Slider {
         for (let i = 0; i < this.indicators.length; i++) {
             this.indicators[i].addEventListener('click', () => {
                 if (i > this.activePage) {
-                    for (let j = this.activePage; j < i; j++) {
+                    var interval = setInterval(() => {
                         this.move(this.nextBtn)
-                    }
+                        if (i == this.activePage) {
+                            clearInterval(interval);
+                        }
+                    }, 300);
                 } else if (i < this.activePage) {
-                    for (let j = this.activePage; j > i; j--) {
+                    var interval = setInterval(() => {
                         this.move(this.prevBtn)
-                    }
+                        if (i == this.activePage) {
+                            clearInterval(interval);
+                        }
+                    }, 300);
                 }
-
             })
 
         }
@@ -37,41 +43,43 @@ class Slider {
     }
 
     move(btn) {
-        if (btn == this.prevBtn && this.activePage > 0) {
-            this.pages[this.activePage].style.transition = `1s`;
-            this.pages[this.activePage].classList.remove('active');
-            this.activePage--;
-            for (let i = 0; i < this.pages.length; i++) {
-                if (i != this.activePage + 1) {
-                    this.pages[i].style.transition = `0s`;
+        if (this.flag == true) {
+            if (btn == this.prevBtn && this.activePage > 0) {
+                this.pages[this.activePage].style.transition = `1s`;
+                this.pages[this.activePage].classList.remove('active');
+                this.activePage--;
+                for (let i = 0; i < this.pages.length; i++) {
+                    if (i > this.activePage) {
+                        this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
+                    }
                 }
-                if (i > this.activePage) {
-                    this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
-                }
-            }
-            this.pages[this.activePage].style.transition = `1s`;
-            this.pages[this.activePage].style.transform = `translateY(0)`;
-            this.pages[this.activePage].classList.add('active');
+                this.pages[this.activePage].style.transition = `1s`;
+                this.pages[this.activePage].style.transform = `translateY(0)`;
+                this.pages[this.activePage].classList.add('active');
 
-            this.checkIndicator();
-        } else if (btn == this.nextBtn && this.activePage < this.pages.length - 1) {
-            this.pages[this.activePage].classList.remove('active');
-            this.pages[this.activePage].style.transition = `1s`;
-            this.activePage++;
-            for (let i = 0; i < this.pages.length; i++) {
-                if (i != this.activePage - 1) {
-                    this.pages[i].style.transition = `0s`;
+                this.checkIndicator();
+            } else if (btn == this.nextBtn && this.activePage < this.pages.length - 1) {
+                this.pages[this.activePage].classList.remove('active');
+                this.pages[this.activePage].style.transition = `1s`;
+                this.activePage++;
+                for (let i = 0; i < this.pages.length; i++) {
+                    if (i < this.activePage) {
+                        this.pages[i].style.transform = `translateY(${-this.pageHeight}px)`;
+                    }
                 }
-                if (i < this.activePage) {
-                    this.pages[i].style.transform = `translateY(${-this.pageHeight}px)`;
-                }
+                this.pages[this.activePage].style.transition = `1s`;
+                this.pages[this.activePage].style.transform = `translateY(0)`;
+                this.pages[this.activePage].classList.add('active');
+                this.checkIndicator();
+
             }
-            this.pages[this.activePage].style.transition = `1s`;
-            this.pages[this.activePage].style.transform = `translateY(0)`;
-            this.pages[this.activePage].classList.add('active');
-            this.checkIndicator();
+            this.flag = false;
 
         }
+        setTimeout(() => {
+            this.flag = true;
+        }, 2000);
+
     }
 
     checkIndicator() {

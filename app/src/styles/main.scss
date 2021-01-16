@@ -142,7 +142,9 @@ button:hover {
     background: black;
     border: 2px solid rgb(153, 151, 151);
 }
-
+.indicator:focus{
+    outline: none;
+}
 .prev_btn {
     margin-bottom: 5px;
 }

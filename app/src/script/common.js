@@ -1,3 +1,8 @@
+const main_body = document.querySelector('.main_body');
+const header = document.querySelector('.header');
+const look_btn = document.querySelectorAll('.look_btn');
+const view_btn = document.querySelector('.view_btn');
+const back_btn = document.querySelector('.back_btn');
 class Slider {
     constructor(obj) {
         this.slider = document.querySelector(obj.slider)
@@ -7,6 +12,8 @@ class Slider {
         this.nextBtn = this.slider.querySelector('.next_btn')
         this.activePage = 0;
         this.pageHeight = this.slider.clientHeight;
+        this.pageWidth = this.slider.clientWidth;
+        this.swipeRatio = this.pageWidth < 500 ? 5 : 3;
         this.flag = true;
         for (let i = 0; i < this.pages.length; i++) {
             this.pages[i].style.transform = `translateY(${this.pageHeight}px)`;
@@ -30,12 +37,10 @@ class Slider {
                     this.disableBtns(false)
                 }, 1000);
             }
-
         })
         /*======================================================= /prevNextBtns ===============================================*/
 
         /*======================================================= indicators==================================================*/
-
         for (let i = 0; i < this.indicators.length; i++) {
             this.indicators[i].addEventListener('click', () => {
                 if (this.flag == true) {
@@ -48,7 +53,7 @@ class Slider {
                                 this.disableIndicators(false)
                                 this.flag = true;
                             }
-                        }, 500);
+                        }, 100);
                     } else if (i < this.activePage) {
                         this.flag = false;
                         var interval = setInterval(() => {
@@ -59,19 +64,15 @@ class Slider {
                                 this.disableBtns(true)
                                 this.flag = true
                             }
-                        }, 500);
+                        }, 100);
                     }
                 }
-
-
             })
-
         }
         /*======================================================= /indicators ==================================================*/
 
 
         /*======================================================= wheel =========================================================*/
-
         window.addEventListener('wheel', (e) => {
             if (this.flag == true) {
                 if (e.deltaY > 0) {
@@ -89,7 +90,6 @@ class Slider {
 
 
         /*======================================================= keys ==========================================================*/
-
         window.addEventListener('keydown', (e) => {
             if (this.flag === true) {
                 if (e.code == 'ArrowDown') {
@@ -105,26 +105,65 @@ class Slider {
         })
         /*======================================================= /keys ==========================================================*/
 
-        this.touchStartY;
-        /*======================================================= swipe =========================================================*/
-        this.pages[this.activePage].addEventListener('touchstart', (e) => {
-            this.touchStartY = e.touches[0].clientY;
-            console.log(this.touchStartY);
-        })
-        this.pages[this.activePage].addEventListener('touchmove', (e) => {
-            this.change = e.touches[0].clientY - this.touchStartY;
-            console.log(this.change);
-            this.pages[this.activePage].style.transform = `translateY(${this.change}px)`
-            if (this.change > 0) {
-                this.pages[this.activePage - 1].style.transform = `translateY(${this.pageHeight - this.change}px)`
-            } else if (this.change < 0) {
-                this.pages[this.activePage - 1].style.transform = `translateY(${this.pageHeight - this.change}px)`
-            } else {
-                console.log('no change');
-            }
-        })
-        /*======================================================= /swipe =========================================================*/
 
+        /*======================================================= swipe =========================================================*/
+        this.touchStartY;
+        for (let i = 0; i < this.pages.length; i++) {
+            this.pages[i].addEventListener('touchstart', (e) => {
+                this.touchStartY = e.touches[0].clientY;
+            })
+            this.pages[i].addEventListener('touchmove', (e) => {
+                if (this.flag == true) {
+                    this.change = e.touches[0].clientY - this.touchStartY;
+                    if (this.change > 0 && this.activePage > 0) {
+                        this.pages[this.activePage].style.transition = '0s';
+                        this.pages[this.activePage - 1].style.transition = '0s';
+                        this.pages[this.activePage].style.transform = `translateY(${this.change}px)`
+                        this.pages[this.activePage - 1].style.transform = `translateY(${-this.pageHeight + this.change}px)`
+                    } else if (this.change < 0 && this.activePage < this.pages.length - 1) {
+                        this.pages[this.activePage].style.transition = '0s';
+                        this.pages[this.activePage + 1].style.transition = '0s';
+                        this.pages[this.activePage].style.transform = `translateY(${this.change}px)`
+                        this.pages[this.activePage + 1].style.transform = `translateY(${this.pageHeight + this.change}px)`
+                    } else {
+                        console.log('no change');
+                    }
+                }
+            })
+            this.pages[i].addEventListener('touchend', (e) => {
+                if (this.flag == true) {
+                    var translateSize = this.pages[this.activePage].getBoundingClientRect().top;
+                    if (translateSize > 0) {
+                        if (translateSize > this.pageHeight / this.swipeRatio) {
+                            this.move(this.prevBtn);
+                        }
+                        else {
+                            this.pages[this.activePage].style.transition = '1s';
+                            this.pages[this.activePage - 1].style.transition = '1s';
+                            this.pages[this.activePage].style.transform = 'translateY(0)';
+                            this.pages[this.activePage - 1].style.transform = `translateY(${-this.pageHeight}px)`;
+                        }
+                    }
+                    else {
+                        if (Math.abs(translateSize) > this.pageHeight / this.swipeRatio) {
+                            this.move(this.nextBtn);
+                        }
+                        else {
+                            this.pages[this.activePage].style.transition = '1s';
+                            this.pages[this.activePage + 1].style.transition = '1s';
+                            this.pages[this.activePage].style.transform = 'translateY(0)';
+                            this.pages[this.activePage + 1].style.transform = `translateY(${this.pageHeight}px)`;
+                        }
+                    }
+                    this.flag = false;
+                    setTimeout(() => {
+                        this.flag = true;
+                        console.log(this.flag);
+                    }, 1000);
+                }
+            })
+        }
+        /*======================================================= /swipe =========================================================*/
     }
 
     move(btn) {
@@ -155,7 +194,7 @@ class Slider {
             this.pages[this.activePage].classList.add('active');
             this.checkIndicator();
         }
-
+        this.topPageCheck();
     }
 
     checkIndicator() {
@@ -185,6 +224,18 @@ class Slider {
             }
         }
     }
+    topPageCheck() {
+        if (this.activePage == 0) {
+            main_body.style.overscrollBehavior = 'auto';
+            main_body.style.overflow = 'visible';
+            header.style.backdropFilter = 'none';
+        }
+        else {
+            main_body.style.overscrollBehavior = 'none';
+            main_body.style.overflow = 'hidden';
+            header.style.backdropFilter = 'blur(5px)';
+        }
+    }
 
 }
 
@@ -192,7 +243,112 @@ const slider1 = new Slider({
     slider: '.carousel',
 
 })
+window.addEventListener('resize', () => {
+    slider1.pages[slider1.activePage].transform = `translateY(${slider1.pageHeight})`
+})
+/*============================================== burger ========================================*/
+var burger_icon = document.querySelector('.header_burger');
+var header_list = document.querySelectorAll('.header_nav_list');
+var header__content_top = document.querySelector('.header__nav');
+burger_icon.addEventListener('click', function () {
+    if (!burger_icon.classList.contains('clicked')) {
+        burger_icon.classList.add('clicked');
+    } else {
+        burger_icon.classList.remove('clicked');
+    }
+})
+/*============================================== /burger ========================================*/
 
-// window.addEventListener('resize',()=>{
-//     location.reload()
-// })
+/*============================================= lookBtn =========================================*/
+var lookInterval;
+for (let i = 0; i < look_btn.length; i++) {
+    look_btn[i].addEventListener('click', () => {
+        slider1.flag = false;
+        /*===================================== bug fix ==================================*/
+        lookInterval = setInterval(() => {
+            if (slider1.flag == true) {
+                slider1.flag = false;
+            }
+        }, 10);
+        /*===================================== /bug fix ==================================*/
+        console.log(slider1.flag);
+        header.style.transition = '1s';
+        header.style.top = '-100%';
+        document.querySelectorAll('.page2_inner_content')[i].style.display = 'none';
+        document.querySelectorAll('.page2_inner')[i].style.border = 'none';
+        document.querySelector('.carousel_indicators').style.transition = '1s';
+        document.querySelector('.carousel_indicators').style.right = '-100%';
+        main_body.style.overflow = 'hidden';
+        look_btn[i].style.display = 'none';
+    })
+}
+/*============================================= /lookBtn =========================================*/
+
+/*============================================= double click for mobile ==========================*/
+var timeClick = 0;
+for (let i = 0; i < slider1.pages.length; i++) {
+    slider1.pages[i].addEventListener('click', () => {
+        if (timeClick == 0) {
+            timeClick = new Date().getTime();
+        } else {
+            if ((new Date().getTime()) - timeClick < 500) {
+                clearInterval(lookInterval);
+                slider1.flag = true;
+                header.style.top = '0';
+                document.querySelectorAll('.page2_inner_content')[slider1.activePage - 1].style.display = 'flex';
+                document.querySelectorAll('.page2_inner')[slider1.activePage - 1].style.border = '2px solid #CCAF40';
+                document.querySelector('.carousel_indicators').style.transition = '1s';
+                document.querySelector('.carousel_indicators').style.right = '0.5%';
+                look_btn[slider1.activePage - 1].style.display = 'block';
+                main_body.style.overflow = 'visible';
+
+                timeClick = 0;
+            } else {
+                timeClick = new Date().getTime();
+            }
+        }
+    })
+}
+/*============================================ /double click for mobile ==============================*/
+
+view_btn.addEventListener('click', () => {
+    slider1.move(slider1.nextBtn);
+    console.log('view');
+})
+back_btn.addEventListener('click', () => {
+    slider1.indicators[0].click();
+})
+
+/*=================================================== Loading page ===========================================*/
+const loading_page = document.querySelector('.loading_page');
+const overlays = document.querySelectorAll('.overlay');
+const loading_animation = document.querySelector('.loading_animation');
+const percentage = document.querySelector('.inner_circle');
+// window.addEventListener('load', onLoad)
+function onLoad() {
+    let i = 0;
+    main_body.style.overflow = 'hidden';
+    var interval = setInterval(() => {
+        percentage.innerHTML = `${++i}%`;
+        if (i == 100) {
+            clearInterval(interval);
+            loading_animation.style.opacity = 0;
+            for (let i = 0; i < overlays.length; i++) {
+                setTimeout(() => {
+                    if (i % 2 == 0) {
+                        overlays[i].style.transform = 'translateY(-200%)';
+                    } else {
+                        overlays[i].style.transform = 'translateY(200%)';
+                    }
+                }, 100 * i);
+            }
+        }
+    }, 20);
+}
+setTimeout(() => {
+    loading_page.style.display = 'none';
+    main_body.style.overflow = 'visible';
+}, 3500)
+onLoad();
+
+/*==================================================== /Loading page ==========================================*/

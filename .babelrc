@@ -12,6 +12,6 @@
         ]
     ],
     "ignore": [
-        "./app/src/script/lib"
+        "./app/src/script/"
     ]
 }

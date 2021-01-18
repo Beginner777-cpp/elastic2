@@ -51,6 +51,7 @@ class Slider {
                             if (i == this.activePage) {
                                 clearInterval(interval);
                                 this.disableIndicators(false)
+                                this.disableBtns(false)
                                 this.flag = true;
                             }
                         }, 100);
@@ -61,11 +62,14 @@ class Slider {
                             if (i == this.activePage) {
                                 clearInterval(interval);
                                 this.disableIndicators(false)
-                                this.disableBtns(true)
+                                this.disableBtns(false)
                                 this.flag = true
                             }
                         }, 100);
                     }
+                }
+                else {
+                    console.log('flag = false');
                 }
             })
         }
@@ -126,8 +130,11 @@ class Slider {
                         this.pages[this.activePage].style.transform = `translateY(${this.change}px)`
                         this.pages[this.activePage + 1].style.transform = `translateY(${this.pageHeight + this.change}px)`
                     } else {
-                        console.log('no change');
+
                     }
+                }
+                else {
+                    console.log('touchMove - false');
                 }
             })
             this.pages[i].addEventListener('touchend', (e) => {
@@ -138,10 +145,12 @@ class Slider {
                             this.move(this.prevBtn);
                         }
                         else {
-                            this.pages[this.activePage].style.transition = '1s';
-                            this.pages[this.activePage - 1].style.transition = '1s';
-                            this.pages[this.activePage].style.transform = 'translateY(0)';
-                            this.pages[this.activePage - 1].style.transform = `translateY(${-this.pageHeight}px)`;
+                            if (this.activePage > 0) {
+                                this.pages[this.activePage].style.transition = '1s';
+                                this.pages[this.activePage - 1].style.transition = '1s';
+                                this.pages[this.activePage].style.transform = 'translateY(0)';
+                                this.pages[this.activePage - 1].style.transform = `translateY(${-this.pageHeight}px)`;
+                            }
                         }
                     }
                     else {
@@ -149,17 +158,17 @@ class Slider {
                             this.move(this.nextBtn);
                         }
                         else {
-                            this.pages[this.activePage].style.transition = '1s';
-                            this.pages[this.activePage + 1].style.transition = '1s';
-                            this.pages[this.activePage].style.transform = 'translateY(0)';
-                            this.pages[this.activePage + 1].style.transform = `translateY(${this.pageHeight}px)`;
+                            if (this.activePage < this.pages.length - 1) {
+                                this.pages[this.activePage].style.transition = '1s';
+                                this.pages[this.activePage + 1].style.transition = '1s';
+                                this.pages[this.activePage].style.transform = 'translateY(0)';
+                                this.pages[this.activePage + 1].style.transform = `translateY(${this.pageHeight}px)`;
+                            }
                         }
                     }
-                    this.flag = false;
-                    setTimeout(() => {
-                        this.flag = true;
-                        console.log(this.flag);
-                    }, 1000);
+                }
+                else {
+                    console.log('touchEnd - false');
                 }
             })
         }
@@ -195,6 +204,8 @@ class Slider {
             this.checkIndicator();
         }
         this.topPageCheck();
+        lastPageChecker();
+
     }
 
     checkIndicator() {
@@ -271,7 +282,6 @@ for (let i = 0; i < look_btn.length; i++) {
             }
         }, 10);
         /*===================================== /bug fix ==================================*/
-        console.log(slider1.flag);
         header.style.transition = '1s';
         header.style.top = '-100%';
         document.querySelectorAll('.page2_inner_content')[i].style.display = 'none';
@@ -288,32 +298,34 @@ for (let i = 0; i < look_btn.length; i++) {
 var timeClick = 0;
 for (let i = 0; i < slider1.pages.length; i++) {
     slider1.pages[i].addEventListener('click', () => {
-        if (timeClick == 0) {
-            timeClick = new Date().getTime();
-        } else {
-            if ((new Date().getTime()) - timeClick < 500) {
-                clearInterval(lookInterval);
-                slider1.flag = true;
-                header.style.top = '0';
-                document.querySelectorAll('.page2_inner_content')[slider1.activePage - 1].style.display = 'flex';
-                document.querySelectorAll('.page2_inner')[slider1.activePage - 1].style.border = '2px solid #CCAF40';
-                document.querySelector('.carousel_indicators').style.transition = '1s';
-                document.querySelector('.carousel_indicators').style.right = '0.5%';
-                look_btn[slider1.activePage - 1].style.display = 'block';
-                main_body.style.overflow = 'visible';
-
-                timeClick = 0;
-            } else {
+        if (slider1.activePage > 0 && slider1.activePage < slider1.pages.length - 1) {
+            if (timeClick == 0) {
                 timeClick = new Date().getTime();
+            } else {
+                if ((new Date().getTime()) - timeClick < 500) {
+                    clearInterval(lookInterval);
+                    slider1.flag = true;
+                    header.style.top = '0';
+                    document.querySelectorAll('.page2_inner_content')[slider1.activePage - 1].style.display = 'flex';
+                    document.querySelectorAll('.page2_inner')[slider1.activePage - 1].style.border = '2px solid #CCAF40';
+                    document.querySelector('.carousel_indicators').style.transition = '1s';
+                    document.querySelector('.carousel_indicators').style.right = '0.5%';
+                    look_btn[slider1.activePage - 1].style.display = 'block';
+                    main_body.style.overflow = 'visible';
+
+                    timeClick = 0;
+                } else {
+                    timeClick = new Date().getTime();
+                }
             }
         }
+
     })
 }
 /*============================================ /double click for mobile ==============================*/
 
 view_btn.addEventListener('click', () => {
     slider1.move(slider1.nextBtn);
-    console.log('view');
 })
 back_btn.addEventListener('click', () => {
     slider1.indicators[0].click();
@@ -352,3 +364,42 @@ setTimeout(() => {
 onLoad();
 
 /*==================================================== /Loading page ==========================================*/
+
+
+/*==================================================== Last page counter ======================================*/
+var numInterval1, numInterval2, numInterval3;
+function lastPageChecker() {
+    var lastPage_nums = [25, 49, 36];
+    var i = 0,
+    j = 0,
+    k = 0;
+    clearInterval(numInterval1);
+    clearInterval(numInterval2);
+    clearInterval(numInterval3);
+    if (slider1.activePage == 10) {
+        console.log(numInterval1);
+        numInterval1 = setInterval(() => {
+            document.querySelectorAll('.page11_number')[0].innerHTML = ++i;
+            if (i == lastPage_nums[0]) {
+                clearInterval(numInterval1);
+            }
+        }, 100);
+        numInterval2 = setInterval(() => {
+            document.querySelectorAll('.page11_number')[1].innerHTML = ++j;
+            if (j == lastPage_nums[1]) {
+                clearInterval(numInterval2);
+            }
+        }, 100);
+        numInterval3 = setInterval(() => {
+            document.querySelectorAll('.page11_number')[2].innerHTML = ++k;
+            if (k == lastPage_nums[2]) {
+                clearInterval(numInterval3);
+            }
+        }, 100);
+    }
+    else {
+        console.log('no last page');
+    }
+}
+
+/*==================================================== /Last page counter ======================================*/

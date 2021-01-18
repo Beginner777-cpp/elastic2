@@ -371,8 +371,8 @@ var numInterval1, numInterval2, numInterval3;
 function lastPageChecker() {
     var lastPage_nums = [25, 49, 36];
     var i = 0,
-    j = 0,
-    k = 0;
+        j = 0,
+        k = 0;
     clearInterval(numInterval1);
     clearInterval(numInterval2);
     clearInterval(numInterval3);
@@ -403,3 +403,5 @@ function lastPageChecker() {
 }
 
 /*==================================================== /Last page counter ======================================*/
+
+

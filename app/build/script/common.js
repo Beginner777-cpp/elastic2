@@ -404,4 +404,9 @@ function lastPageChecker() {
 
 /*==================================================== /Last page counter ======================================*/
 
+window.addEventListener('keydown', (e)=>{
+    if(e.code=='Tab'){
+        e.preventDefault();
+    }
+})
 

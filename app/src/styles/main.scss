@@ -1,6 +1,9 @@
 @import 'common/fonts.scss';
 @import 'common/root.scss';
-
+body{
+    overscroll-behavior: ;
+    overflow: visible;
+}
 * {
     margin: 0;
     padding: 0;
@@ -8,17 +11,16 @@
     text-decoration: none;
     box-sizing: border-box;
 }
-.main_body{
+
+.main_body {
     background: black;
 }
+
 .icon {
-
-
     &-facebook::before {
         content: '\f39e';
         font-size: 16px;
         color: black;
-
     }
 
     &-insta::before {
@@ -86,12 +88,15 @@ button {
     background: none;
     border: none;
 }
+
 button:hover {
     cursor: pointer;
 }
+
 .carousel {
     position: relative;
 }
+
 .carousel_pages {
     position: relative;
     width: 100%;
@@ -109,9 +114,7 @@ button:hover {
     overflow: hidden;
 }
 
-.carousel_page.active {
-    
-}
+.carousel_page.active {}
 
 .carousel_indicators {
     position: fixed;
@@ -142,9 +145,11 @@ button:hover {
     background: black;
     border: 2px solid rgb(153, 151, 151);
 }
-.indicator:focus{
+
+.indicator:focus {
     outline: none;
 }
+
 .prev_btn {
     margin-bottom: 5px;
 }

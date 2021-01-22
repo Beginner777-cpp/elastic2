@@ -46,6 +46,14 @@ class Slider {
                 if (this.flag == true) {
                     if (i > this.activePage) {
                         this.flag = false;
+                        // let a = 1;
+                        // for (let j = this.activePage; j < i; j++) {
+                        //     setTimeout(() => {
+                        //         this.move(this.nextBtn)
+                        //     }, 100 * a);
+                        //     a+=10;
+                        // }
+
                         var interval = setInterval(() => {
                             this.move(this.nextBtn)
                             if (i == this.activePage) {
@@ -67,8 +75,7 @@ class Slider {
                             }
                         }, 100);
                     }
-                }
-                else {
+                } else {
                     console.log('flag = false');
                 }
             })
@@ -132,8 +139,7 @@ class Slider {
                     } else {
 
                     }
-                }
-                else {
+                } else {
                     console.log('touchMove - false');
                 }
             })
@@ -143,8 +149,7 @@ class Slider {
                     if (translateSize > 0) {
                         if (translateSize > this.pageHeight / this.swipeRatio) {
                             this.move(this.prevBtn);
-                        }
-                        else {
+                        } else {
                             if (this.activePage > 0) {
                                 this.pages[this.activePage].style.transition = '1s';
                                 this.pages[this.activePage - 1].style.transition = '1s';
@@ -152,12 +157,10 @@ class Slider {
                                 this.pages[this.activePage - 1].style.transform = `translateY(${-this.pageHeight}px)`;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         if (Math.abs(translateSize) > this.pageHeight / this.swipeRatio) {
                             this.move(this.nextBtn);
-                        }
-                        else {
+                        } else {
                             if (this.activePage < this.pages.length - 1) {
                                 this.pages[this.activePage].style.transition = '1s';
                                 this.pages[this.activePage + 1].style.transition = '1s';
@@ -166,8 +169,7 @@ class Slider {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     console.log('touchEnd - false');
                 }
             })
@@ -240,8 +242,7 @@ class Slider {
             main_body.style.overscrollBehavior = 'auto';
             main_body.style.overflow = 'visible';
             header.style.backdropFilter = 'none';
-        }
-        else {
+        } else {
             main_body.style.overscrollBehavior = 'none';
             main_body.style.overflow = 'hidden';
             header.style.backdropFilter = 'blur(5px)';
@@ -336,8 +337,9 @@ const loading_page = document.querySelector('.loading_page');
 const overlays = document.querySelectorAll('.overlay');
 const loading_animation = document.querySelector('.loading_animation');
 const percentage = document.querySelector('.inner_circle');
-// window.addEventListener('load', onLoad)
+
 function onLoad() {
+    slider1.flag = false;
     let i = 0;
     main_body.style.overflow = 'hidden';
     var interval = setInterval(() => {
@@ -360,6 +362,7 @@ function onLoad() {
 setTimeout(() => {
     loading_page.style.display = 'none';
     main_body.style.overflow = 'visible';
+    slider1.flag = true;
 }, 3500)
 onLoad();
 
@@ -368,6 +371,7 @@ onLoad();
 
 /*==================================================== Last page counter ======================================*/
 var numInterval1, numInterval2, numInterval3;
+
 function lastPageChecker() {
     var lastPage_nums = [25, 49, 36];
     var i = 0,
@@ -396,17 +400,15 @@ function lastPageChecker() {
                 clearInterval(numInterval3);
             }
         }, 100);
-    }
-    else {
+    } else {
         console.log('no last page');
     }
 }
 
 /*==================================================== /Last page counter ======================================*/
 
-window.addEventListener('keydown', (e)=>{
-    if(e.code=='Tab'){
+window.addEventListener('keydown', (e) => {
+    if (e.code == 'Tab') {
         e.preventDefault();
     }
 })
-
